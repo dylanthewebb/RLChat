@@ -30,6 +30,7 @@ class Adversarial_Discriminator(nn.Module):
         self.gru = nn.GRU(hidden_size, hidden_size, n_layers,
                           dropout=(0 if n_layers == 1 else dropout), bidirectional=True)
         self.fc = nn.Linear(hidden_size, output_size)
+        self.softmax = nn.Softmax()
 
     def forward(self, state, hidden=None):
         # Convert word indexes to  embeddings
@@ -47,6 +48,7 @@ class Adversarial_Discriminator(nn.Module):
         output, hidden = self.gru(packed, hidden)
 
         output = self.fc(hidden[-1])
+        output = self.softmax(output)
         # Unpack padding
         # outputs, _ = nn.utils.rnn.pad_packed_sequence(fc_output)
         # Sum bidirectional GRU outputs
